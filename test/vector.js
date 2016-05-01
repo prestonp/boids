@@ -27,5 +27,20 @@ describe('Vector', () => {
 
     assert(vector !== v1);
   });
-});
 
+  it('should divide vector by a scalar', () => {
+    const v1 = new Vector(3, 9);
+    const vector = v1.div(3);
+
+    assert(vector instanceof Vector);
+    assert(v1 !== vector);
+    assert(vector.x === 1);
+    assert(vector.y === 3);
+  });
+
+  it('should compute magnitude', () => {
+    const v1 = new Vector(3, 4);
+    const mag = v1.mag();
+    assert(mag === 5);
+  });
+});

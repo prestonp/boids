@@ -3,7 +3,12 @@ const Gfx = require('./lib/gfx');
 
 let boids = Simulator.initBoids();
 
-while(1) {
+function loop() {
+  setTimeout(() => {
+    window.requestAnimationFrame(loop);
+  }, 10);
   Gfx.drawBoids(boids);
   Simulator.moveBoids(boids);
 }
+
+loop();
