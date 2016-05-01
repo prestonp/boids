@@ -52,7 +52,7 @@
 	function loop() {
 	  setTimeout(() => {
 	    window.requestAnimationFrame(loop);
-	  }, 10);
+	  }, 1);
 	  Gfx.drawBoids(boids);
 	  Simulator.moveBoids(boids);
 	}
@@ -66,9 +66,9 @@
 
 	const Boid = __webpack_require__(2);
 	const Vector = __webpack_require__(3);
-	const MAX_BOIDS = 10;
+	const MAX_BOIDS = 100;
 	
-	function randPos(width=1000, height=1000) {
+	function randPos(width=window.innerWidth, height=window.innerHeight) {
 	  const x = Math.random() * width;
 	  const y = Math.random() * height;
 	  return new Vector(x,y);
@@ -105,8 +105,20 @@
 	  return c;
 	}
 	
-	function limitVel(vel) {
-	  const limit = 10;
+	function rule3(boid, idx, boids) {
+	  let vel = new Vector(0, 0);
+	
+	  boids.forEach((b, i) => {
+	    if (idx !== i) {
+	      vel.add(b.vel);
+	    }
+	  });
+	
+	  vel = vel.div(boids.length-1);
+	  return vel.sub(boid.vel).div(8);
+	}
+	
+	function limitVel(vel, limit) {
 	  const mag = vel.mag();
 	
 	  if (mag > limit)
@@ -129,8 +141,9 @@
 	    boids = boids.forEach((boid, idx) => {
 	      let v1 = rule1(boid, idx, boids);
 	      let v2 = rule2(boid, idx, boids);
-	      boid.vel = boid.vel.add(v1, v2);
-	      // boid.vel = limitVel(boid.vel);
+	      let v3 = rule3(boid, idx, boids);
+	      boid.vel = boid.vel.add(v1, v2, v3);
+	      boid.vel = limitVel(boid.vel, 10);
 	      boid.pos = boid.pos.add(boid.vel);
 	    });
 	    return boids;
@@ -209,8 +222,11 @@
 	let canvas = document.getElementById('boids');
 	let ctx = canvas.getContext('2d');
 	
-	const width = 2;
-	const height = 2;
+	canvas.width  = window.innerWidth;
+	canvas.height = window.innerHeight;
+	
+	const width = 5;
+	const height = 5;
 	
 	const Gfx = {
 	  drawBoids: function(boids) {
