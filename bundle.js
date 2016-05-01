@@ -1,41 +1,41 @@
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-
+/******/
 /******/ 		// Check if module is in cache
 /******/ 		if(installedModules[moduleId])
 /******/ 			return installedModules[moduleId].exports;
-
+/******/
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			exports: {},
 /******/ 			id: moduleId,
 /******/ 			loaded: false
 /******/ 		};
-
+/******/
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
+/******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.loaded = true;
-
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-
-
+/******/
+/******/
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-
+/******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-
+/******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-
+/******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
 /******/ })
@@ -46,9 +46,9 @@
 
 	const Simulator = __webpack_require__(1);
 	const Gfx = __webpack_require__(4);
-
+	
 	let boids = Simulator.initBoids();
-
+	
 	function loop() {
 	  setTimeout(() => {
 	    window.requestAnimationFrame(loop);
@@ -56,7 +56,7 @@
 	  Gfx.drawBoids(boids);
 	  Simulator.moveBoids(boids);
 	}
-
+	
 	loop();
 
 
@@ -67,13 +67,13 @@
 	const Boid = __webpack_require__(2);
 	const Vector = __webpack_require__(3);
 	const MAX_BOIDS = 10;
-
-	function randPos(width=150, height=150) {
+	
+	function randPos(width=1000, height=1000) {
 	  const x = Math.random() * width;
 	  const y = Math.random() * height;
 	  return new Vector(x,y);
 	}
-
+	
 	function rule1(boid, idx, boids) {
 	  // Calculate perceived center of swarm (excluding current boid)
 	  const center = boids.reduce((total, b, i) => {
@@ -82,18 +82,18 @@
 	    }
 	    return total;
 	  }, new Vector(0, 0));
-
+	
 	  const n = boids.length - 1;
-
+	
 	  center.x /= n;
 	  center.y /= n;
-
+	
 	  return center.sub(boid.pos).div(100);
 	}
-
+	
 	function rule2(boid, idx, boids) {
 	  let c = new Vector(0, 0);
-
+	
 	  boids.forEach((b, i) => {
 	    if (i !== idx) {
 	      let diff = b.pos.sub(boid.pos);
@@ -101,10 +101,19 @@
 	        c = c.sub(diff);
 	    }
 	  });
-
+	
 	  return c;
 	}
-
+	
+	function limitVel(vel) {
+	  const limit = 10;
+	  const mag = vel.mag();
+	
+	  if (mag > limit)
+	    return vel.div(mag).mul(limit);
+	  return vel;
+	}
+	
 	const Simulator = {
 	  initBoids: function() {
 	    const boids = [];
@@ -115,18 +124,19 @@
 	    }
 	    return boids;
 	  },
-
+	
 	  moveBoids: function(boids) {
 	    boids = boids.forEach((boid, idx) => {
 	      let v1 = rule1(boid, idx, boids);
 	      let v2 = rule2(boid, idx, boids);
 	      boid.vel = boid.vel.add(v1, v2);
+	      // boid.vel = limitVel(boid.vel);
 	      boid.pos = boid.pos.add(boid.vel);
 	    });
 	    return boids;
 	  }
 	};
-
+	
 	module.exports = Simulator;
 
 
@@ -138,7 +148,7 @@
 	  this.pos = pos;
 	  this.vel = vel;
 	};
-
+	
 	module.exports = Boid;
 
 
@@ -150,14 +160,14 @@
 	  this.x = x;
 	  this.y = y;
 	};
-
+	
 	function operator(op) {
 	  return function(...args) {
 	    const { x, y } = this;
-
+	
 	    if (Array.isArray(args[0]))
 	      args = args[0];
-
+	
 	    return args.reduce((total, vector) => {
 	      if (op === '+') {
 	        total.x += vector.x;
@@ -170,7 +180,7 @@
 	    }, new Vector(x, y));
 	  };
 	}
-
+	
 	function scalar(op) {
 	  return function(val) {
 	    if (op === '*') {
@@ -180,7 +190,7 @@
 	    }
 	  };
 	}
-
+	
 	Vector.prototype.add = operator('+');
 	Vector.prototype.sub = operator('-');
 	Vector.prototype.mul = scalar('*');
@@ -188,7 +198,7 @@
 	Vector.prototype.mag = function() {
 	  return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
 	};
-
+	
 	module.exports = Vector;
 
 
@@ -198,10 +208,10 @@
 
 	let canvas = document.getElementById('boids');
 	let ctx = canvas.getContext('2d');
-
+	
 	const width = 2;
 	const height = 2;
-
+	
 	const Gfx = {
 	  drawBoids: function(boids) {
 	    ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -213,9 +223,10 @@
 	    return boids;
 	  }
 	};
-
+	
 	module.exports = Gfx;
 
 
 /***/ }
 /******/ ]);
+//# sourceMappingURL=bundle.js.map
