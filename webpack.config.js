@@ -3,5 +3,15 @@ module.exports = {
   output: {
     filename: 'bundle.js'
   },
-  devtool: 'source-map'
+  devtool: 'source-map',
+  module: {
+    loaders: [
+      {
+        loader: 'babel',
+        query: {
+          presets: ['es2015']
+        }
+      }
+    ]
+  }
 };
