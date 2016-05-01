@@ -6,7 +6,7 @@ let boids = Simulator.initBoids();
 function loop() {
   setTimeout(() => {
     window.requestAnimationFrame(loop);
-  }, 1);
+  }, 10);
   Gfx.drawBoids(boids);
   Simulator.moveBoids(boids);
 }

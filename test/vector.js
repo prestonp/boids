@@ -43,4 +43,18 @@ describe('Vector', () => {
     const mag = v1.mag();
     assert(mag === 5);
   });
+
+  it('should compute unit vector', () => {
+    const v1 = new Vector(3, 4);
+    const unit = v1.unit();
+
+    assert(unit.mag() === 1);
+  });
+
+  it('should compute unit vector and scale', () => {
+    const v1 = new Vector(3, 4);
+    const unit = v1.unit(5);
+
+    assert(unit.mag() === 5);
+  });
 });
