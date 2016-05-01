@@ -44,7 +44,7 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	const Simulator = __webpack_require__(1);
+	const Simulator = __webpack_require__(5);
 	const Gfx = __webpack_require__(4);
 	
 	let boids = Simulator.initBoids();
@@ -62,12 +62,131 @@
 
 /***/ },
 /* 1 */
+/***/ function(module, exports) {
+
+	exports.dumpBoids = function(boids, label) {
+	  if (label) console.log(label);
+	  boids.forEach((boid, idx) => {
+	    console.log(idx, boid);
+	  });
+	  console.log('====');
+	};
+
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	const Vector = function(x, y) {
+	  this.x = x;
+	  this.y = y;
+	};
+	
+	function operator(op) {
+	  return function(...args) {
+	    const { x, y } = this;
+	
+	    if (Array.isArray(args[0]))
+	      args = args[0];
+	
+	    return args.reduce((total, vector) => {
+	      if (op === '+') {
+	        total.x += vector.x;
+	        total.y += vector.y;
+	      } else if (op === '-') {
+	        total.x -= vector.x;
+	        total.y -= vector.y;
+	      }
+	      return total;
+	    }, new Vector(x, y));
+	  };
+	}
+	
+	function scalar(op) {
+	  return function(val) {
+	    if (op === '*') {
+	      return new Vector(this.x * val, this.y * val);
+	    } else if (op === '/') {
+	      if (val === 0) val = 1;
+	      return new Vector(this.x / val, this.y / val);
+	    }
+	  };
+	}
+	
+	Vector.prototype.add = operator('+');
+	Vector.prototype.sub = operator('-');
+	Vector.prototype.mul = scalar('*');
+	Vector.prototype.div = scalar('/');
+	
+	Vector.prototype.mag = function() {
+	  return Math.sqrt(this.x * this.x + this.y * this.y);
+	};
+	
+	Vector.prototype.unit = function(scale) {
+	  if (scale) return this.div(this.mag()).mul(scale);
+	  return this.div(this.mag());
+	};
+	
+	module.exports = Vector;
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	var Boid = function(pos, vel) {
+	  this.pos = pos;
+	  this.vel = vel;
+	};
+	
+	module.exports = Boid;
+
+
+/***/ },
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	const Boid = __webpack_require__(2);
-	const Vector = __webpack_require__(3);
+	let canvas = document.getElementById('boids');
+	let ctx = canvas.getContext('2d');
+	const dumpBoids = __webpack_require__(1).dumpBoids;
+	const Vector = __webpack_require__(2);
+	
+	canvas.width  = window.innerWidth;
+	canvas.height = window.innerHeight;
+	
+	const width = 5;
+	const height = 5;
+	
+	const Gfx = {
+	  drawBoids: function(boids) {
+	    ctx.clearRect(0, 0, canvas.width, canvas.height);
+	    boids.forEach((boid, idx) => {
+	      const { x, y } = boid.pos;
+	      ctx.fillStyle = "rgb(200,0,0)";
+	      ctx.fillRect(x, y, width, height);
+	      const boidCenter = boid.pos.add(new Vector(width/2, height/2));
+	      const heading = boidCenter.add(boid.vel.unit(10));
+	      ctx.beginPath();
+	      ctx.moveTo(boidCenter.x, boidCenter.y);
+	      ctx.lineTo(heading.x, heading.y);
+	      ctx.closePath();
+	      ctx.stroke();
+	    });
+	    return boids;
+	  }
+	};
+	
+	module.exports = Gfx;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const Boid = __webpack_require__(3);
+	const Vector = __webpack_require__(2);
 	const MAX_BOIDS = 100;
-	const dumpBoids = __webpack_require__(5).dumpBoids;
+	const dumpBoids = __webpack_require__(1).dumpBoids;
 	
 	function randPos(width=window.innerWidth, height=window.innerHeight) {
 	  const x = Math.random() * width;
@@ -172,125 +291,6 @@
 	};
 	
 	module.exports = Simulator;
-
-
-/***/ },
-/* 2 */
-/***/ function(module, exports) {
-
-	var Boid = function(pos, vel) {
-	  this.pos = pos;
-	  this.vel = vel;
-	};
-	
-	module.exports = Boid;
-
-
-/***/ },
-/* 3 */
-/***/ function(module, exports) {
-
-	const Vector = function(x, y) {
-	  this.x = x;
-	  this.y = y;
-	};
-	
-	function operator(op) {
-	  return function(...args) {
-	    const { x, y } = this;
-	
-	    if (Array.isArray(args[0]))
-	      args = args[0];
-	
-	    return args.reduce((total, vector) => {
-	      if (op === '+') {
-	        total.x += vector.x;
-	        total.y += vector.y;
-	      } else if (op === '-') {
-	        total.x -= vector.x;
-	        total.y -= vector.y;
-	      }
-	      return total;
-	    }, new Vector(x, y));
-	  };
-	}
-	
-	function scalar(op) {
-	  return function(val) {
-	    if (op === '*') {
-	      return new Vector(this.x * val, this.y * val);
-	    } else if (op === '/') {
-	      if (val === 0) val = 1;
-	      return new Vector(this.x / val, this.y / val);
-	    }
-	  };
-	}
-	
-	Vector.prototype.add = operator('+');
-	Vector.prototype.sub = operator('-');
-	Vector.prototype.mul = scalar('*');
-	Vector.prototype.div = scalar('/');
-	
-	Vector.prototype.mag = function() {
-	  return Math.sqrt(this.x * this.x + this.y * this.y);
-	};
-	
-	Vector.prototype.unit = function(scale) {
-	  if (scale) return this.div(this.mag()).mul(scale);
-	  return this.div(this.mag());
-	};
-	
-	module.exports = Vector;
-
-
-/***/ },
-/* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
-	let canvas = document.getElementById('boids');
-	let ctx = canvas.getContext('2d');
-	const dumpBoids = __webpack_require__(5).dumpBoids;
-	const Vector = __webpack_require__(3);
-	
-	canvas.width  = window.innerWidth;
-	canvas.height = window.innerHeight;
-	
-	const width = 5;
-	const height = 5;
-	
-	const Gfx = {
-	  drawBoids: function(boids) {
-	    ctx.clearRect(0, 0, canvas.width, canvas.height);
-	    boids.forEach((boid, idx) => {
-	      const { x, y } = boid.pos;
-	      ctx.fillStyle = "rgb(200,0,0)";
-	      ctx.fillRect(x, y, width, height);
-	      const boidCenter = boid.pos.add(new Vector(width/2, height/2));
-	      const heading = boidCenter.add(boid.vel.unit(10));
-	      ctx.beginPath();
-	      ctx.moveTo(boidCenter.x, boidCenter.y);
-	      ctx.lineTo(heading.x, heading.y);
-	      ctx.closePath();
-	      ctx.stroke();
-	    });
-	    return boids;
-	  }
-	};
-	
-	module.exports = Gfx;
-
-
-/***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	exports.dumpBoids = function(boids, label) {
-	  if (label) console.log(label);
-	  boids.forEach((boid, idx) => {
-	    console.log(idx, boid);
-	  });
-	  console.log('====');
-	};
 
 
 /***/ }
