@@ -46,9 +46,9 @@
 
 	'use strict';
 	
-	var config = __webpack_require__(5);
-	var Simulator = __webpack_require__(1);
-	var Gfx = __webpack_require__(4);
+	var config = __webpack_require__(1);
+	var Simulator = __webpack_require__(2);
+	var Gfx = __webpack_require__(5);
 	var simulator = new Simulator(window.innerWidth, window.innerHeight);
 	
 	var boids = simulator.initBoids();
@@ -79,13 +79,30 @@
 
 /***/ },
 /* 1 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = {
+	  numBoids: 100,
+	  maxVel: 10,
+	  neighborRadius: 50,
+	  reboundVel: 10,
+	  headingFactor: 8, // lower the more uniform
+	  repelDistance: 10,
+	  cohesion: 1, // percent of attraction to cluster centers
+	  delay: 0
+	};
+
+/***/ },
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var config = __webpack_require__(5);
-	var Boid = __webpack_require__(2);
-	var Vector = __webpack_require__(3);
+	var config = __webpack_require__(1);
+	var Boid = __webpack_require__(3);
+	var Vector = __webpack_require__(4);
 	
 	var Simulator = function Simulator(width, height) {
 	  this.width = width;
@@ -197,7 +214,7 @@
 	module.exports = Simulator;
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -210,7 +227,7 @@
 	module.exports = Boid;
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -273,14 +290,14 @@
 	module.exports = Vector;
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var canvas = document.getElementById('boids');
 	var ctx = canvas.getContext('2d');
-	var Vector = __webpack_require__(3);
+	var Vector = __webpack_require__(4);
 	
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
@@ -327,23 +344,6 @@
 	};
 	
 	module.exports = Gfx;
-
-/***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	module.exports = {
-	  numBoids: 100,
-	  maxVel: 10,
-	  neighborRadius: 50,
-	  reboundVel: 10,
-	  headingFactor: 8, // lower the more uniform
-	  repelDistance: 10,
-	  cohesion: 1, // percent of attraction to cluster centers
-	  delay: 0
-	};
 
 /***/ }
 /******/ ]);
