@@ -1,2 +1,350 @@
-!function(t){function n(r){if(i[r])return i[r].exports;var e=i[r]={exports:{},id:r,loaded:!1};return t[r].call(e.exports,e,e.exports,n),e.loaded=!0,e.exports}var i={};return n.m=t,n.c=i,n.p="",n(0)}([function(t,n,i){"use strict";function r(){setTimeout(function(){window.requestAnimationFrame(r)},10),o.drawBoids(u),e.moveBoids(u)}var e=i(4),o=i(3),u=e.initBoids();r()},function(t,n){"use strict";function i(t){return function(){for(var n=arguments.length,i=Array(n),r=0;n>r;r++)i[r]=arguments[r];var o=this.x,u=this.y;return Array.isArray(i[0])&&(i=i[0]),i.reduce(function(n,i){return"+"===t?(n.x+=i.x,n.y+=i.y):"-"===t&&(n.x-=i.x,n.y-=i.y),n},new e(o,u))}}function r(t){return function(n){return"*"===t?new e(this.x*n,this.y*n):"/"===t?(0===n&&(n=1),new e(this.x/n,this.y/n)):void 0}}var e=function(t,n){this.x=t,this.y=n};e.prototype.add=i("+"),e.prototype.sub=i("-"),e.prototype.mul=r("*"),e.prototype.div=r("/"),e.prototype.mag=function(){return Math.sqrt(this.x*this.x+this.y*this.y)},e.prototype.unit=function(t){return t?this.div(this.mag()).mul(t):this.div(this.mag())},t.exports=e},function(t,n){"use strict";var i=function(t,n){this.pos=t,this.vel=n};t.exports=i},function(t,n,i){"use strict";var r=document.getElementById("boids"),e=r.getContext("2d"),o=i(1);r.width=window.innerWidth,r.height=window.innerHeight;var u=5,s=5,d={drawBoids:function(t){return e.clearRect(0,0,r.width,r.height),t.forEach(function(t,n){var i=t.pos,r=i.x,d=i.y;e.fillStyle="rgb(200,0,0)",e.fillRect(r,d,u,s);var a=t.pos.add(new o(u/2,s/2)),c=a.add(t.vel.unit(10));e.beginPath(),e.moveTo(a.x,a.y),e.lineTo(c.x,c.y),e.closePath(),e.stroke()}),t}};t.exports=d},function(t,n,i){"use strict";function r(){var t=arguments.length<=0||void 0===arguments[0]?window.innerWidth:arguments[0],n=arguments.length<=1||void 0===arguments[1]?window.innerHeight:arguments[1],i=Math.random()*t,r=Math.random()*n;return new c(i,r)}function e(t,n,i){var r=i.reduce(function(n,i,r){return i!==t&&(n=n.add(i.pos)),n},new c(0,0)),e=i.length-1;return r.div(e).sub(t.pos).div(100)}function o(t,n,i){var r=new c(0,0);return i.forEach(function(n,i){if(n!==t){var e=n.pos.sub(t.pos);e.mag()<10&&(r=r.sub(n.pos.sub(t.pos)))}}),r}function u(t,n,i){var r=new c(0,0);return i.forEach(function(n,i){n!==t&&(r=r.add(n.vel))}),r=r.div(i.length-1),r.sub(t.vel).div(8)}function s(t,n){var i=t.mag();return i>n?t.div(i).mul(n):t}function d(t){var n=new c(t.vel.x,t.vel.y);return t.pos.x<0?n.x=10:t.pos.x>window.innerWidth&&(n.x=-10),t.pos.y<0?n.y=10:t.pos.y>window.innerHeight&&(n.y=-10),n}var a=i(2),c=i(1),v=100,h={initBoids:function(){for(var t=[],n=new c(window.innerWidth/2,window.innerHeight/2),i=0;v>i;i++){var e=r(),o=n.sub(e);t.push(new a(e,o))}return t},moveBoids:function(t){return t=t.forEach(function(n,i){var r=t.filter(function(t){return t.pos.sub(n.pos).mag()<50}),a=e(n,i,r),c=o(n,i,r),v=u(n,i,r);n.vel=n.vel.add(a,c,v),n.vel=s(n.vel,10),n.vel=d(n),n.pos=n.pos.add(n.vel)})}};t.exports=h}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+/******/
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var config = __webpack_require__(5);
+	var Simulator = __webpack_require__(1);
+	var Gfx = __webpack_require__(4);
+	var simulator = new Simulator(window.innerWidth, window.innerHeight);
+	
+	var boids = simulator.initBoids();
+	var lastCalledTime = Date.now();
+	var fps = 0;
+	
+	Gfx.onResize(function (width, height) {
+	  simulator.width = width;
+	  simulator.height = height;
+	});
+	
+	function loop() {
+	  var delta = (Date.now() - lastCalledTime) / 1000;
+	  lastCalledTime = Date.now();
+	  fps = 1 / delta;
+	
+	  setTimeout(function () {
+	    window.requestAnimationFrame(loop);
+	  }, config.delay);
+	
+	  Gfx.clear();
+	  Gfx.drawBoids(boids);
+	  Gfx.drawFps(fps);
+	  simulator.moveBoids(boids);
+	}
+	
+	loop();
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var config = __webpack_require__(5);
+	var Boid = __webpack_require__(2);
+	var Vector = __webpack_require__(3);
+	
+	var Simulator = function Simulator(width, height) {
+	  this.width = width;
+	  this.height = height;
+	};
+	
+	Simulator.prototype.rule1 = function (boid, idx, boids) {
+	  // Calculate perceived center of swarm (excluding current boid)
+	  var center = boids.reduce(function (total, b, i) {
+	    if (b !== boid) {
+	      total = total.add(b.pos);
+	    }
+	    return total;
+	  }, new Vector(0, 0));
+	
+	  var n = boids.length - 1;
+	  return center.div(n).sub(boid.pos).div(100).mul(config.cohesion);
+	};
+	
+	Simulator.prototype.rule2 = function (boid, idx, boids) {
+	  // Repel boids from each other
+	  var c = new Vector(0, 0);
+	
+	  boids.forEach(function (b, i) {
+	    if (b !== boid) {
+	      var diff = b.pos.sub(boid.pos);
+	      if (diff.mag() < config.repelDistance) c = c.sub(b.pos.sub(boid.pos));
+	    }
+	  });
+	
+	  return c;
+	};
+	
+	Simulator.prototype.rule3 = function (boid, idx, boids) {
+	  // Direction of neighboring boids should influence this boid
+	  var vel = new Vector(0, 0);
+	
+	  boids.forEach(function (b, i) {
+	    if (b !== boid) {
+	      vel = vel.add(b.vel);
+	    }
+	  });
+	
+	  vel = vel.div(boids.length - 1);
+	  return vel.sub(boid.vel).div(config.headingFactor);
+	};
+	
+	Simulator.prototype.randPos = function () {
+	  var x = Math.random() * this.width;
+	  var y = Math.random() * this.height;
+	  return new Vector(x, y);
+	};
+	
+	Simulator.prototype.initBoids = function () {
+	  var boids = [];
+	  var center = new Vector(this.width / 2, this.height / 2);
+	  for (var i = 0; i < config.numBoids; i++) {
+	    var pos = this.randPos();
+	    var vel = center.sub(pos);
+	    boids.push(new Boid(pos, vel));
+	  }
+	  return boids;
+	};
+	
+	Simulator.prototype.limitVel = function (vel, limit) {
+	  var mag = vel.mag();
+	
+	  if (mag > limit) return vel.div(mag).mul(limit);
+	  return vel;
+	};
+	
+	Simulator.prototype.boundPos = function (boid) {
+	  var vel = new Vector(boid.vel.x, boid.vel.y);
+	
+	  if (boid.pos.x < 0) {
+	    vel.x = config.reboundVel;
+	  } else if (boid.pos.x > this.width) {
+	    vel.x = -config.reboundVel;
+	  }
+	
+	  if (boid.pos.y < 0) {
+	    vel.y = config.reboundVel;
+	  } else if (boid.pos.y > this.height) {
+	    vel.y = -config.reboundVel;
+	  }
+	
+	  return vel;
+	};
+	
+	Simulator.prototype.moveBoids = function (boids) {
+	  var _this = this;
+	
+	  boids = boids.forEach(function (boid, idx) {
+	    var neighbors = boids.filter(function (b) {
+	      return b.pos.sub(boid.pos).mag() < config.neighborRadius;
+	    });
+	
+	    var v1 = _this.rule1(boid, idx, neighbors);
+	    var v2 = _this.rule2(boid, idx, neighbors);
+	    var v3 = _this.rule3(boid, idx, neighbors);
+	    boid.vel = boid.vel.add(v1, v2, v3);
+	    boid.vel = _this.limitVel(boid.vel, config.maxVel);
+	    boid.vel = _this.boundPos(boid);
+	    boid.pos = boid.pos.add(boid.vel);
+	  });
+	  return boids;
+	};
+	
+	module.exports = Simulator;
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	var Boid = function Boid(pos, vel) {
+	  this.pos = pos;
+	  this.vel = vel;
+	};
+	
+	module.exports = Boid;
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var Vector = function Vector(x, y) {
+	  this.x = x;
+	  this.y = y;
+	};
+	
+	function operator(op) {
+	  return function () {
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+	
+	    var x = this.x;
+	    var y = this.y;
+	
+	
+	    if (Array.isArray(args[0])) args = args[0];
+	
+	    return args.reduce(function (total, vector) {
+	      if (op === '+') {
+	        total.x += vector.x;
+	        total.y += vector.y;
+	      } else if (op === '-') {
+	        total.x -= vector.x;
+	        total.y -= vector.y;
+	      }
+	      return total;
+	    }, new Vector(x, y));
+	  };
+	}
+	
+	function scalar(op) {
+	  return function (val) {
+	    if (op === '*') {
+	      return new Vector(this.x * val, this.y * val);
+	    } else if (op === '/') {
+	      if (val === 0) val = 1;
+	      return new Vector(this.x / val, this.y / val);
+	    }
+	  };
+	}
+	
+	Vector.prototype.add = operator('+');
+	Vector.prototype.sub = operator('-');
+	Vector.prototype.mul = scalar('*');
+	Vector.prototype.div = scalar('/');
+	
+	Vector.prototype.mag = function () {
+	  return Math.sqrt(this.x * this.x + this.y * this.y);
+	};
+	
+	Vector.prototype.unit = function (scale) {
+	  if (scale) return this.div(this.mag()).mul(scale);
+	  return this.div(this.mag());
+	};
+	
+	module.exports = Vector;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var canvas = document.getElementById('boids');
+	var ctx = canvas.getContext('2d');
+	var Vector = __webpack_require__(3);
+	
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	
+	var width = 5;
+	var height = 5;
+	
+	var Gfx = {
+	  clear: function clear() {
+	    ctx.clearRect(0, 0, canvas.width, canvas.height);
+	  },
+	
+	  drawBoids: function drawBoids(boids) {
+	    boids.forEach(function (boid, idx) {
+	      var _boid$pos = boid.pos;
+	      var x = _boid$pos.x;
+	      var y = _boid$pos.y;
+	
+	      ctx.fillStyle = "rgb(200,0,0)";
+	      ctx.fillRect(x, y, width, height);
+	      var boidCenter = boid.pos.add(new Vector(width / 2, height / 2));
+	      var heading = boidCenter.add(boid.vel.unit(10));
+	      ctx.beginPath();
+	      ctx.moveTo(boidCenter.x, boidCenter.y);
+	      ctx.lineTo(heading.x, heading.y);
+	      ctx.closePath();
+	      ctx.stroke();
+	    });
+	    return boids;
+	  },
+	
+	  drawFps: function drawFps(fps) {
+	    ctx.font = "32px helvetica";
+	    ctx.fillText(Math.round(fps) + ' fps', 10, 30);
+	  },
+	
+	  onResize: function onResize(callback) {
+	    window.addEventListener('resize', function (e) {
+	      canvas.width = window.innerWidth;
+	      canvas.height = window.innerHeight;
+	      callback(window.innerWidth, window.innerHeight);
+	    });
+	  }
+	};
+	
+	module.exports = Gfx;
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = {
+	  numBoids: 100,
+	  maxVel: 10,
+	  neighborRadius: 50,
+	  reboundVel: 10,
+	  headingFactor: 8, // lower the more uniform
+	  repelDistance: 10,
+	  cohesion: 1, // percent of attraction to cluster centers
+	  delay: 0
+	};
+
+/***/ }
+/******/ ]);
 //# sourceMappingURL=bundle.js.map
