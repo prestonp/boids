@@ -2,6 +2,7 @@ const config = require('./config');
 const Simulator = require('./lib/simulator');
 const Gfx = require('./lib/gfx');
 const simulator = new Simulator(window.innerWidth, window.innerHeight);
+require('./lib/hud');
 
 let boids = simulator.initBoids();
 let lastCalledTime = Date.now();
@@ -21,10 +22,12 @@ function loop() {
     window.requestAnimationFrame(loop);
   }, config.delay);
 
+  const subset = boids.slice(0, config.numBoids);
+
   Gfx.clear();
-  Gfx.drawBoids(boids);
+  Gfx.drawBoids(subset);
   Gfx.drawFps(fps);
-  simulator.moveBoids(boids);
+  simulator.moveBoids(subset);
 }
 
 loop();
