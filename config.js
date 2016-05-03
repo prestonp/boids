@@ -1,4 +1,5 @@
 module.exports = {
+  maxBoids: 200,
   numBoids: 100,
   maxVel: 10,
   neighborRadius: 50,
